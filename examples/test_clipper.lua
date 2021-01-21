@@ -43,9 +43,7 @@ end
 
 local clean = function(paths)
     local points = poly.Paths()
-    for k = 1, #paths do
-        points:add(create_path(paths[k]))
-    end
+    points:add(create_path(paths))
     points = points:clean_polygon()
     return get_solution(points)
 end
