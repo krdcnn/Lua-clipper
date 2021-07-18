@@ -1,0 +1,34 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+PROJECT(clipper)
+
+SET(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/../bin)
+
+# The header name clipper.hpp is too generic, so install in a subdirectory
+# SET(CMAKE_INSTALL_INCDIR "${CMAKE_INSTALL_PREFIX}/include/clipper")
+# SET(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+# SET(CMAKE_INSTALL_PKGCONFIGDIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig")
+# SET(PCFILE "${CMAKE_CURRENT_BINARY_DIR}/clipper.pc")
+
+if (BUILD_LINUX)
+  SET(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/linux-64")
+elseif (BUILD_OSX)
+  SET(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/macosx-64")
+elseif (BUILD_WIN32)
+  SET(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/win")
+endif()
+
+SET(BUILD_SHARED_LIBS ON CACHE BOOL
+  "Build shared libraries (.dll/.so) instead of static ones (.lib/.a)")
+ADD_LIBRARY(clipper clipper.cpp clipper_offset.cpp clipper_wrap.cpp)
+
+CONFIGURE_FILE (clipper.pc.cmakein "${PCFILE}" @ONLY)
+
+# INSTALL (FILES clipper.hpp DESTINATION "${CMAKE_INSTALL_INCDIR}")
+# CMake treats shared libraries as runtime objects on Windows platforms
+INSTALL (TARGETS clipper 
+  RUNTIME DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+# INSTALL (FILES "${PCFILE}" DESTINATION "${CMAKE_INSTALL_PKGCONFIGDIR}")
+
+SET(NO_SONAME True)
+# SET_TARGET_PROPERTIES(polyclipping PROPERTIES VERSION 22.0.0 SOVERSION 22 )
